@@ -1,0 +1,54 @@
+go 1.26.4
+
+use (
+	.
+	./examples
+	./contrib/flags-pflag
+	./contrib/format-hcl
+	./contrib/format-ini
+	./contrib/format-properties
+	./contrib/format-toml
+	./contrib/format-yaml
+	./contrib/source-appconfig
+	./contrib/source-azurekeyvault
+	./contrib/source-consul
+	./contrib/source-etcd
+	./contrib/source-gcpsecrets
+	./contrib/source-k8s
+	./contrib/source-kiln
+	./contrib/source-nats
+	./contrib/source-s3
+	./contrib/source-secretsmanager
+	./contrib/source-ssm
+	./contrib/source-vault
+)
+
+// Pin the version each contrib module requires to this checkout, so the
+// modules build before github.com/ubgo/cfgkit is published. The replace lives
+// HERE rather than in each contrib go.mod on purpose: go.work is a
+// development-only file that nobody importing these modules ever sees, so the
+// published go.mod files stay honest. Remove this line once the root module
+// has a tagged version, and bump the requires to it.
+replace github.com/ubgo/cfgkit v0.0.0 => ./
+
+// The examples module is the first to require contrib modules by path, so
+// they need the same pre-publication pin the root has. Same reasoning: go.work
+// is development-only, so the published go.mod files stay honest.
+replace github.com/ubgo/cfgkit/contrib/format-hcl v0.0.0 => ./contrib/format-hcl
+replace github.com/ubgo/cfgkit/contrib/format-ini v0.0.0 => ./contrib/format-ini
+replace github.com/ubgo/cfgkit/contrib/format-properties v0.0.0 => ./contrib/format-properties
+replace github.com/ubgo/cfgkit/contrib/format-toml v0.0.0 => ./contrib/format-toml
+replace github.com/ubgo/cfgkit/contrib/format-yaml v0.0.0 => ./contrib/format-yaml
+replace github.com/ubgo/cfgkit/contrib/flags-pflag v0.0.0 => ./contrib/flags-pflag
+replace github.com/ubgo/cfgkit/contrib/source-appconfig v0.0.0 => ./contrib/source-appconfig
+replace github.com/ubgo/cfgkit/contrib/source-azurekeyvault v0.0.0 => ./contrib/source-azurekeyvault
+replace github.com/ubgo/cfgkit/contrib/source-consul v0.0.0 => ./contrib/source-consul
+replace github.com/ubgo/cfgkit/contrib/source-etcd v0.0.0 => ./contrib/source-etcd
+replace github.com/ubgo/cfgkit/contrib/source-gcpsecrets v0.0.0 => ./contrib/source-gcpsecrets
+replace github.com/ubgo/cfgkit/contrib/source-k8s v0.0.0 => ./contrib/source-k8s
+replace github.com/ubgo/cfgkit/contrib/source-kiln v0.0.0 => ./contrib/source-kiln
+replace github.com/ubgo/cfgkit/contrib/source-nats v0.0.0 => ./contrib/source-nats
+replace github.com/ubgo/cfgkit/contrib/source-s3 v0.0.0 => ./contrib/source-s3
+replace github.com/ubgo/cfgkit/contrib/source-secretsmanager v0.0.0 => ./contrib/source-secretsmanager
+replace github.com/ubgo/cfgkit/contrib/source-ssm v0.0.0 => ./contrib/source-ssm
+replace github.com/ubgo/cfgkit/contrib/source-vault v0.0.0 => ./contrib/source-vault

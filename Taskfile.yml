@@ -1,0 +1,203 @@
+# https://taskfile.dev
+#
+# Tasks for the cfgkit module. Run from this directory.
+#
+# Task names match every other ubgo module on purpose: `task test` means the
+# same thing everywhere, so moving between modules costs no re-learning.
+
+version: "3"
+
+vars:
+  # Every contrib module is its own Go module, so a consumer downloads only
+  # what it imports. Add a new adapter here and to go.work.
+  CONTRIB: format-hcl format-ini format-properties format-toml format-yaml flags-pflag source-azurekeyvault source-appconfig source-consul source-etcd source-gcpsecrets source-k8s source-kiln source-nats source-s3 source-secretsmanager source-ssm source-vault
+  FUZZ_TARGETS: FuzzResolutionNeverPanics FuzzDecodeMap FuzzScalarDecodeNeverPanics FuzzSliceDecodeNeverPanics FuzzStringIsABytePipe FuzzStringSliceRoundTripsThroughItsDelimiter
+  # The platforms the README claims support for. Adding one here is what makes
+  # the claim true; stating it in prose is not.
+  PLATFORMS: linux darwin windows
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  test:
+    desc: Run tests — root module and every contrib module
+    cmds:
+      - go test ./...
+      - for: { var: CONTRIB }
+        cmd: cd contrib/{{.ITEM}} && go test ./...
+      - cd examples && go test ./...
+
+  test:race:
+    desc: Run tests with the race detector — root and contrib
+    cmds:
+      - go test -race ./...
+      - for: { var: CONTRIB }
+        cmd: cd contrib/{{.ITEM}} && go test -race ./...
+      - cd examples && go test -race ./...
+
+  test:cover:
+    desc: Report statement coverage — the LIBRARY only, the number the README quotes
+    # Two packages are excluded, and both would misreport rather than inform:
+    #
+    #   examples/    demonstration code. `task test` runs it and its output is
+    #                pinned by Example blocks, but counting it would measure how
+    #                much of a demo is covered, not how much of the library is.
+    #   cfgkittest/  the shared conformance suite. It is test INFRASTRUCTURE
+    #                rather than library surface, and its own number is a
+    #                subprocess artifact: the suite's failure arms can only run
+    #                against a non-conforming source, which is exercised by
+    #                re-executing the test binary, and a child's coverage never
+    #                reaches this profile. It DOES have thorough tests of its
+    #                own — see cfgkittest_test.go, which feeds it five sources
+    #                that each break one guarantee and asserts it catches each
+    #                on the right check.
+    #
+    # Before this, the task said 90.8% while the README badge said 96%: the
+    # badge was measuring the root package and the task was measuring ./...
+    cmds:
+      - go test -coverprofile=cover.out $(go list ./... | grep -v -e '/examples' -e '/cfgkittest')
+      - go tool cover -func=cover.out | tail -1
+
+  cover:
+    desc: Statement coverage for EVERY module — the numbers the README quotes
+    cmds:
+      - echo "── core"
+      - task: test:cover
+      - for: { var: CONTRIB }
+        cmd: |
+          echo "── contrib/{{.ITEM}}"
+          cd contrib/{{.ITEM}} && go test -coverprofile=cover.out ./... > /dev/null && go tool cover -func=cover.out | tail -1
+
+  test:cover:html:
+    desc: Open the coverage report in a browser
+    deps: [test:cover]
+    cmds:
+      - go tool cover -html=cover.out
+
+  test:uncovered:
+    desc: List functions below 100% coverage
+    cmds:
+      - go test -coverprofile=cover.out $(go list ./... | grep -v -e '/examples' -e '/cfgkittest') > /dev/null
+      - 'go tool cover -func=cover.out | grep -v "100.0%" || echo "everything is covered"'
+
+  fuzz:
+    desc: 'Fuzz one property: task fuzz -- FuzzResolutionNeverPanics [30s]'
+    vars:
+      TARGET: '{{index (splitArgs .CLI_ARGS) 0}}'
+      DURATION: '{{if gt (len (splitArgs .CLI_ARGS)) 1}}{{index (splitArgs .CLI_ARGS) 1}}{{else}}30s{{end}}'
+    cmds:
+      # -run "^$" so only the fuzz engine runs; without it the unit suite
+      # executes first and the fuzz budget is spent on startup.
+      - go test -run "^$" -fuzz "^{{.TARGET}}$" -fuzztime {{.DURATION}} .
+
+  fuzz:all:
+    desc: Fuzz every property for 30s each
+    cmds:
+      - for: { var: FUZZ_TARGETS }
+        cmd: |
+          echo "── {{.ITEM}}"
+          go test -run "^$" -fuzz "^{{.ITEM}}$" -fuzztime 30s .
+
+  fuzz:contrib:
+    desc: 'Fuzz every target in every contrib module: task fuzz:contrib [-- 15s]'
+    vars:
+      DURATION: '{{if .CLI_ARGS}}{{index (splitArgs .CLI_ARGS) 0}}{{else}}15s{{end}}'
+    cmds:
+      - |
+        # Targets are DISCOVERED from the source rather than listed in a var,
+        # so adding one to a module enrolls it here automatically. A list kept
+        # by hand is a list that ends up covering most of them.
+        for dir in contrib/*/; do
+          mod=$(basename "$dir")
+          targets=$(grep -ho 'func Fuzz[A-Za-z0-9_]*' "$dir"*_test.go 2>/dev/null | sed 's/func //' | sort -u)
+          [ -z "$targets" ] && continue
+          for t in $targets; do
+            echo "── $mod :: $t"
+            ( cd "$dir" && go test -run "^$" -fuzz "^$t\$" -fuzztime {{.DURATION}} . ) || exit 1
+          done
+        done
+
+  fuzz:list:
+    desc: List the fuzz properties in this module
+    cmds:
+      - 'grep -h "^func Fuzz" *_test.go | sed "s/func \\(Fuzz[A-Za-z]*\\).*/  \\1/"'
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  fmt:
+    desc: Format the source
+    cmds:
+      - gofmt -w .
+
+  fmt:check:
+    desc: Fail when the source is unformatted
+    cmds:
+      - |
+        out=$(gofmt -l . | grep -v '^docsi' || true)
+        if [ -n "$out" ]; then echo "gofmt needed on:"; echo "$out"; exit 1; fi
+
+  deps:
+    desc: Show third-party dependencies — must be ubgo/dotenv and nothing else
+    cmds:
+      - 'go list -deps ./... | grep "\." | grep -v ubgo/cfgkit | sort -u || echo "none"'
+
+  tidy:
+    desc: Tidy go.mod and go.sum
+    cmds:
+      - go mod tidy
+
+  doc:
+    desc: Print the exported API
+    cmds:
+      - go doc -all .
+
+  bump:contrib:
+    desc: Re-pin every contrib module to the root's published version — run after tagging the root
+    cmds:
+      - for: { var: CONTRIB }
+        cmd: cd contrib/{{.ITEM}} && GOWORK=off go get github.com/ubgo/cfgkit@latest && GOWORK=off go mod tidy
+
+  bump:
+    desc: Re-pin ubgo/dotenv to the pushed main HEAD, then rebuild in module mode
+    cmds:
+      # GOWORK=off so the pin resolves against the REMOTE main rather than a
+      # sibling directory — this pin is what `go install`/`go get` users build
+      # against, and a workspace would mask a stale one.
+      - GOWORK=off go get github.com/ubgo/dotenv@main
+      - GOWORK=off go build ./...
+      - 'grep "github.com/ubgo/dotenv v" go.mod'
+
+  build:cross:
+    desc: Build for every supported platform — the claim "runs anywhere", checked
+    # A package that states a platform boundary without building for it is
+    # making a claim nobody has tested. The failure that motivates this is
+    # cheap to cause and expensive to find: one call to a syscall that does not
+    # exist on Windows breaks compilation for that platform AND for every
+    # package importing it, invisibly, because every build so far was for the
+    # host.
+    cmds:
+      - for: { var: PLATFORMS }
+        cmd: GOOS={{.ITEM}} go build ./... && echo "  {{.ITEM}} ok"
+
+  ci:
+    desc: The full gate — format, vet, race tests, cross-build, across every module
+    cmds:
+      - task: fmt:check
+      - task: vet
+      - task: build:cross
+      - task: test:race
+      - for: { var: CONTRIB }
+        cmd: cd contrib/{{.ITEM}} && task ci
+      - cd examples && task ci
+
+  clean:
+    desc: Remove coverage artifacts
+    cmds:
+      - rm -f cover.out cover.html
