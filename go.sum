@@ -1,2 +1,4 @@
 github.com/ubgo/dotenv v0.0.0-20260906070131-bc9b60d41f5a h1:8KoQWcn/a5Bv3rOF+EFBq4rZZE8SHvWReuzhzA3touU=
 github.com/ubgo/dotenv v0.0.0-20260906070131-bc9b60d41f5a/go.mod h1:eng/tDmSBJVTUiyz7Vvw4vazzzWDlwGg53hZxlsENXk=
+github.com/ubgo/dotenv v0.1.2-0.20260910135617-45e991e589f1 h1:B5ncVFVS8wB/E75WVoLaA769GTBB9cDthn3Wxbs4D58=
+github.com/ubgo/dotenv v0.1.2-0.20260910135617-45e991e589f1/go.mod h1:krAvKUOO5R06oeJPUtmcj5slvgAH+yZ/de21eUNz7Is=

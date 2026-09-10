@@ -74,6 +74,35 @@ jobs:
   # be stdlib-only and portable, and the .env chain joins paths — the most
   # plausible place for a platform difference to hide — so it is built and
   # raced here rather than assumed.
+  # The minimum Go version is a CLAIM, and prose does not verify it. This job
+  # is what makes "works on Go 1.22" true: it builds and tests the CORE module
+  # with a real 1.22 toolchain, resolving github.com/ubgo/dotenv from the proxy
+  # exactly as a consumer would.
+  #
+  # It builds the ROOT module only, deliberately. Every contrib module pulls a
+  # vendor SDK with its own floor, and examples is not a consumer-facing
+  # module — including them would make this job fail for reasons that say
+  # nothing about whether cfgkit itself supports 1.22.
+  minimum-go:
+    name: minimum supported Go (1.22)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+
+      - name: build and test the core at the declared minimum
+        env:
+          # GOWORK=off so the module resolves its dependency from the proxy the
+          # way a consumer does, rather than through the development workspace.
+          GOWORK: off
+        run: |
+          go build ./...
+          go vet ./...
+          go test ./...
+
   windows:
     name: windows (go 1.26)
     runs-on: windows-latest
