@@ -17,7 +17,7 @@ go get github.com/ubgo/cfgkit                              # the library
 go get github.com/ubgo/cfgkit/contrib/source-vault         # any adapter you want, separately
 ```
 
-One dependency: [`github.com/ubgo/dotenv`](https://github.com/ubgo/dotenv), which is itself stdlib-only.
+One dependency: [`github.com/ubgo/dotenv`](https://github.com/ubgo/dotenv), which is itself stdlib-only. **Minimum Go: 1.22** — checked by a CI job that builds and tests the core with a real 1.22 toolchain, not asserted here. Adapter modules under `contrib/` are floored by the SDKs they wrap and may need more.
 
 **Three things ship here, and each installs on its own:**
 

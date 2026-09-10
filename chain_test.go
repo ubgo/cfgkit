@@ -523,7 +523,7 @@ func TestDefaultSourcesUsesTheWorkingDirectory(t *testing.T) {
 		".env":     "APP_ENV=production\nCHAIN_HOST=cwd-file\n",
 		".env.dev": "CHAIN_HOST=wrong\n",
 	})
-	t.Chdir(dir)
+	chdir(t, dir)
 
 	cfg, res, err := cfgkit.Load[chainCfg](cfgkit.DefaultSources())
 	if err != nil {
@@ -535,4 +535,31 @@ func TestDefaultSourcesUsesTheWorkingDirectory(t *testing.T) {
 	if res.Mode() != cfgkit.ModeProd {
 		t.Errorf("mode = %q, want prod", res.Mode())
 	}
+}
+
+// chdir changes the working directory for the duration of the test and
+// restores it afterwards.
+//
+// testing.T.Chdir does exactly this and arrived in Go 1.24. It is written out
+// here so the module keeps building on the minimum Go version it declares —
+// a library that claims to support 1.22 and whose own tests need 1.24 has not
+// really checked the claim.
+//
+// It does NOT run in parallel with anything: the working directory is process
+// state, so a parallel test changing it would corrupt every other test's view.
+func chdir(t *testing.T, dir string) {
+	t.Helper()
+
+	old, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("reading the working directory: %v", err)
+	}
+	if err := os.Chdir(dir); err != nil {
+		t.Fatalf("changing to %s: %v", dir, err)
+	}
+	t.Cleanup(func() {
+		if err := os.Chdir(old); err != nil {
+			t.Fatalf("restoring the working directory: %v", err)
+		}
+	})
 }
