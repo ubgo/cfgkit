@@ -1,0 +1,24 @@
+# Normalize line endings — LF in the repo regardless of the checkout platform.
+#
+# Verified safe for this repository: no tracked file contains CRLF, and nothing
+# here is byte-compared. The CRLF behaviour cfgkit does test — that a list
+# element's trailing carriage return is trimmed — is asserted with Go string
+# literals in edge_cases_test.go, not with an on-disk fixture, so normalization
+# cannot weaken it.
+#
+# A repo that DID hold byte-exact fixtures would need to exempt them here,
+# because `text=auto` would rewrite them on checkout and the assertions would
+# then pass or fail depending on the developer's OS.
+* text=auto eol=lf
+
+# Generated — collapse in diffs and keep out of language statistics.
+go.sum linguist-generated=true
+go.work.sum linguist-generated=true
+
+# Documentation is the majority of the byte count in some adapter modules and
+# would otherwise make GitHub report this as a Markdown project.
+*.md linguist-documentation=true
+
+# No rules for images, PDFs or vendor/: this repository contains none, ships no
+# branding assets by decision, and vendors nothing. A rule describing files that
+# do not exist is a rule nobody can verify.

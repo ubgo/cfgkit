@@ -1,0 +1,44 @@
+{
+  "$comment": "Text manifest only. No visual identity, logo, icon or OG image is produced for this repo by explicit instruction — satl-brand-kit is deliberately not run. The fields here feed the README intro and the GitHub About/topics, so they must stay in sync with both.",
+
+  "name": "cfgkit",
+  "repo": "ubgo/cfgkit",
+  "language": "go",
+  "kind": "library",
+  "license": "Apache-2.0",
+
+  "author": {
+    "name": "khanakia",
+    "email": "khanakia@gmail.com",
+    "github": "khanakia"
+  },
+
+  "tagline": "Typed configuration from layered sources, for Go.",
+
+  "description": "Typed Go configuration from layered sources — env vars, .env, JSON, YAML, TOML, flags, Vault, Consul, etcd, Kubernetes, AWS, GCP and Azure — into one validated struct. Defaults compile into the binary, so a valid config exists with zero input. Reports which source set each field, masks secrets, and validates in CI instead of at boot.",
+
+  "positioning": {
+    "category": "Go configuration library",
+    "audience": "Go teams running services across several environments, who need to know why a value is what it is",
+    "wedge": "Provenance. Every field can say which source set it, so 'why is my port 9001 when I set 2310' stops being a guessing game — and defaults live in Go, so zero input is a valid configuration rather than a startup failure.",
+    "alternatives": ["viper", "koanf", "envconfig-style binders", "hand-rolled os.Getenv"],
+    "differentiators": [
+      "Provenance: Result.Explain names the source of every field",
+      "Zero input works: compiled-in defaults mean no config file is required to start",
+      "Validate without booting: cfgkit.Check fails a CI step instead of a production container",
+      "Secrets masked structurally, in Explain and JSON alike, not by output styling",
+      "Contract generation: the .env.example is produced from the struct, so it cannot drift",
+      "A flag default never wins — only flags the user actually typed count",
+      "One dependency in the core; every adapter is a separate module you opt into"
+    ]
+  },
+
+  "topics": [
+    "go", "golang", "configuration", "config", "config-management",
+    "environment-variables", "dotenv", "twelve-factor", "struct-tags",
+    "vault", "consul", "etcd", "kubernetes", "aws", "secrets-management",
+    "provenance", "developer-tools", "library"
+  ],
+
+  "homepage": "https://pkg.go.dev/github.com/ubgo/cfgkit"
+}

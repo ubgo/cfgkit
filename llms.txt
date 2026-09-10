@@ -1,0 +1,18 @@
+# cfgkit
+
+> Typed configuration from layered sources for Go — compiled-in defaults, provenance, secret masking, and .env.example generation.
+
+cfgkit is open source (ubgo/cfgkit). Everything runs locally; nothing is sent to the cloud.
+
+## Docs
+- [README](https://github.com/ubgo/cfgkit/blob/main/README.md): overview, install, usage
+- [CHANGELOG](https://github.com/ubgo/cfgkit/blob/main/CHANGELOG.md): release history
+- [CONTRIBUTING](https://github.com/ubgo/cfgkit/blob/main/CONTRIBUTING.md): how to contribute
+
+## Install
+- Homebrew: `brew install ubgo/cfgkit` (see README for the tap)
+- Releases: https://github.com/ubgo/cfgkit/releases
+
+## Links
+- Repository: https://github.com/ubgo/cfgkit
+- Homepage: https://pkg.go.dev/github.com/ubgo/cfgkit

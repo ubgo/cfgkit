@@ -1,0 +1,11 @@
+service = "checkout"
+
+server {
+  port = 8080
+  host = "0.0.0.0"
+}
+
+database {
+  url       = "postgres://db/checkout"
+  max_conns = 25
+}

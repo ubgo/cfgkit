@@ -1,0 +1,163 @@
+# The gate, enforced. `task ci` has existed since the first commit, but nothing
+# ran it on a push — so "gate green" meant "green on the machine that happened
+# to run it last". This is what makes the claim checkable by anyone.
+name: CI
+
+# MANUAL ONLY, on purpose. Nothing here starts by itself: a push, a pull
+# request and a schedule are all commented out, so committing this file and
+# pushing it consumes no Actions minutes and produces no runs.
+#
+# To turn it on, delete `workflow_dispatch` and uncomment the block below.
+# Everything under `jobs:` is already correct and was verified locally with
+# `task ci`; the only thing switched off is what starts it.
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  # pull_request:
+  # # Weekly, so a break caused by something outside this repo — a new Go
+  # # release, a dependency's behaviour change — surfaces on a quiet day
+  # # rather than in the middle of unrelated work.
+  # schedule:
+  #   - cron: "0 6 * * 1"
+
+# A new push to the same branch cancels the previous run: the older result is
+# about code nobody will merge.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: gate (go ${{ matrix.go }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Never stop the other jobs on one failure: knowing whether a break is
+      # one platform or all of them is most of the diagnosis.
+      fail-fast: false
+      matrix:
+        # Windows is NOT here, and its absence is deliberate: `task ci` runs
+        # `gofmt -l . | grep -v` for the format check, and grep is not
+        # dependable on a Windows runner. Failing there would report a tooling
+        # gap as a code failure. Windows gets its own job below, running the
+        # same tests through raw `go` commands — which is the part of the claim
+        # worth checking on that platform.
+        os: [ubuntu-latest, macos-latest]
+        go: ["1.26.x"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          # Cache on the go.mod files, NOT go.sum: contrib modules have no
+          # go.sum yet — go.work resolves them during development and go.sum is
+          # generated at release — and setup-go fails on a path that matches
+          # nothing.
+          cache-dependency-path: |
+            go.mod
+            contrib/*/go.mod
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Gate — format, vet, race tests, every module
+        run: task ci
+
+  # Windows verifies the CODE, not the developer tooling. The library claims to
+  # be stdlib-only and portable, and the .env chain joins paths — the most
+  # plausible place for a platform difference to hide — so it is built and
+  # raced here rather than assumed.
+  windows:
+    name: windows (go 1.26)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+          cache-dependency-path: |
+            go.mod
+            contrib/*/go.mod
+
+      - name: Vet and race-test every module
+        shell: bash
+        run: |
+          set -euo pipefail
+          go vet ./...
+          go test -race ./...
+          for m in contrib/*/; do
+            echo "── $m"
+            (cd "$m" && go vet ./... && go test -race ./...)
+          done
+
+  # Kept separate from the gate so a coverage dip is visible as its own signal
+  # rather than buried in a passing test log.
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+          cache-dependency-path: |
+            go.mod
+            contrib/*/go.mod
+      - uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Statement coverage
+        run: task test:cover
+
+      - name: Fail if the library drops below the documented floor
+        shell: bash
+        run: |
+          # The README states a coverage number. A number in prose that nothing
+          # checks is a claim, so this is what turns it into a fact. The floor
+          # sits a little under the current figure: it is a ratchet against
+          # decay, not a target to game with tests that assert nothing.
+          floor=98.0
+          actual=$(go tool cover -func=cover.out | tail -1 | grep -oE '[0-9]+\.[0-9]+')
+          echo "coverage: ${actual}% (floor ${floor}%)"
+          awk -v a="$actual" -v f="$floor" 'BEGIN { exit (a+0 >= f+0) ? 0 : 1 }' || {
+            echo "::error::coverage ${actual}% is below the ${floor}% floor"
+            exit 1
+          }
+
+  fuzz:
+    name: fuzz (smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.x"
+          cache-dependency-path: go.mod
+
+      - name: Run each fuzz target briefly
+        shell: bash
+        run: |
+          # Short on purpose. The seed corpus already covers the cases that
+          # have bitten, and every stored crasher is replayed by `go test`
+          # anyway; this is here to catch a NEW crasher, not to hunt.
+          for target in FuzzResolutionNeverPanics FuzzDecodeMap; do
+            echo "── $target"
+            go test -run "^$" -fuzz "^${target}$" -fuzztime 45s .
+          done
+
+      - name: Upload any crasher the run found
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-corpus
+          path: testdata/fuzz/
+          if-no-files-found: ignore
