@@ -9,8 +9,16 @@ version: "3"
 
 vars:
   # Every contrib module is its own Go module, so a consumer downloads only
-  # what it imports. Add a new adapter here and to go.work.
-  CONTRIB: format-hcl format-ini format-properties format-toml format-yaml flags-pflag source-azurekeyvault source-appconfig source-consul source-etcd source-gcpsecrets source-k8s source-kiln source-nats source-s3 source-secretsmanager source-ssm source-vault
+  # what it imports.
+  #
+  # DISCOVERED, not listed. Five tasks iterate this — test, test:race, cover,
+  # bump:contrib and ci — and a hand-maintained list silently drops any module
+  # nobody remembered to add: it is not tested, not covered, not re-pinned at
+  # release, and not gated, while every task still reports success. That is
+  # exactly what happened to contrib/cli-cobra. A module now enrols by existing,
+  # which is the same rule the fuzz sweep already follows.
+  CONTRIB:
+    sh: ls -1 contrib
   FUZZ_TARGETS: FuzzResolutionNeverPanics FuzzDecodeMap FuzzScalarDecodeNeverPanics FuzzSliceDecodeNeverPanics FuzzStringIsABytePipe FuzzStringSliceRoundTripsThroughItsDelimiter
   # The platforms the README claims support for. Adding one here is what makes
   # the claim true; stating it in prose is not.
