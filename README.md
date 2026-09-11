@@ -24,7 +24,7 @@ One dependency: [`github.com/ubgo/dotenv`](https://github.com/ubgo/dotenv), whic
 | | What it is | Get it | Docs |
 |---|---|---|---|
 | **Library** | the loader, binder, validation, provenance and contract generation | `go get github.com/ubgo/cfgkit` | [docs/](docs/README.md) |
-| **18 adapter modules** | YAML, TOML, HCL, INI, `.properties`, pflag, Vault, Consul, etcd, Kubernetes, NATS, kiln, GCP, Azure, and four AWS services — **each its own Go module**, so you compile only what you import | `go get github.com/ubgo/cfgkit/contrib/<name>` | [catalogue](docs/catalogue.md) |
+| **19 contrib modules** | YAML, TOML, HCL, INI, `.properties`, pflag, a ready-made cobra `config` command, Vault, Consul, etcd, Kubernetes, NATS, kiln, GCP, Azure, and four AWS services — **each its own Go module**, so you compile only what you import | `go get github.com/ubgo/cfgkit/contrib/<name>` | [catalogue](docs/catalogue.md) |
 | **22 runnable examples** | every source and pattern, each with a README and output pinned by a test | `go run ./examples/read-file` | [examples/](examples/README.md) |
 
 **Full documentation:** [docs/](docs/README.md) — [getting started](docs/getting-started.md) · [API reference](docs/api.md) · [sources](docs/sources.md) · [tags](docs/tags.md) · [types](docs/types.md) · [validation](docs/validation.md) · [provenance](docs/provenance.md) · [modes](docs/modes.md) · [capabilities](docs/capabilities.md) · [recipes](docs/recipes.md) · [writing an adapter](docs/writing-adapters.md)
@@ -332,7 +332,8 @@ Writing your own? `cfgkittest.RunSourceTests` and `RunStructuredTests` are the s
 | Statement coverage — core | **100.0%** |
 | Statement coverage — every format/flags module | **100.0%** |
 | Statement coverage — source modules | 96.9%–100.0% |
-| Test functions | 727 across 20 modules |
+| Statement coverage — `cli-cobra` | 97.1% |
+| Test functions | 678, plus 50 runnable examples, across 20 modules |
 | Fuzz targets | 23 — 6 core, 17 contrib |
 | Dependencies | 1 |
 
@@ -342,13 +343,14 @@ Every code sample in this README is a runnable example in [`example_test.go`](ex
 
 Invariants pinned by tests: zero-input, precedence, no environment mutation, secret masking, error completeness, idempotence, contract completeness, and the capability firewall. The core is at **100.0% statement coverage** — every function, every branch — and so is every format and flags module.
 
-The source modules sit between 96.9% and 100.0%, and **the thirteen uncovered statements are classified rather than rounded away**. All of them fall into three groups, each verified unreachable rather than assumed:
+The source modules sit between 96.9% and 100.0% and `cli-cobra` at 97.1%, and **the sixteen uncovered statements are enumerated rather than rounded away** — every one of them below, with the reason it cannot fire. They fall into four groups:
 
-| Not covered | Why it cannot fire |
-|---|---|
-| `http.NewRequestWithContext`'s error return (8 sites) | The method is a constant and the URL is an already-parsed `*url.URL`. Checked by feeding prefixes containing newlines, `NUL` and `DEL`: `URL.String()` percent-encodes every one, so the request URI is always valid. |
-| `json.Marshal`'s error in `stringify` (2 sites) | The value came out of `json.Unmarshal` moments earlier, so it is marshalable by construction. |
-| `nc.JetStream()`'s error in `source-nats` | The legacy client builds its context lazily. Checked against a server with JetStream **disabled**: this call still succeeds and the failure surfaces at `KeyValue` instead — which is pinned by its own test. |
+| Not covered | Sites | Why it cannot fire |
+|---|---|---|
+| `http.NewRequestWithContext`'s error return | 8 | The method is a constant and the URL is an already-parsed `*url.URL`. Checked by feeding prefixes containing newlines, `NUL` and `DEL`: `URL.String()` percent-encodes every one, so the request URI is always valid. |
+| `json.Marshal`'s error | 4 | Two in `stringify`, on a value that came out of `json.Unmarshal` moments earlier; two in `source-etcd`, on a `map[string]string` built three lines above. `encoding/json` fails on channels, functions and cycles — none of which these types can hold. |
+| `nc.JetStream()`'s error in `source-nats` | 1 | The legacy client builds its context lazily. Checked against a server with JetStream **disabled**: this call still succeeds and the failure surfaces at `KeyValue` instead — which is pinned by its own test. |
+| `res.JSON()`'s error and its caller in `cli-cobra` | 2 | Marshals cfgkit's own provenance record — a mode string, a field slice and a string slice. A typed envelope replaced an earlier `map[string]any` round-trip here, which deleted two further unreachable arms rather than excusing them. |
 
 None is deleted, because each guards a call that would return a nil value on failure, and the next caller is not guaranteed to be as lucky. Every one of them runs under `task ci` on Linux, macOS and Windows — including `GOOS` builds for all three, because a portability claim that nothing compiles for is a claim, not a fact. The same gate is defined as a GitHub Actions workflow in `.github/workflows/ci.yml`, currently **manual-only**: uncomment the `push` trigger to have it run on every commit. `FuzzResolutionNeverPanics` ran 6 million executions with no panic and no double-binding; re-run any target with `task fuzz` or all six with `task fuzz:all`.
 
@@ -406,6 +408,8 @@ Every example's output is **pinned by a test** and run by `task ci`, so document
 **Can I use YAML or TOML?** Yes — either through `contrib/format-yaml`, or in five lines of your own code with `StructuredFunc`, keeping the parser dependency in your module rather than in cfgkit.
 
 **Does it support Vault, AWS Secrets Manager, or Kubernetes secrets?** All three ship as dedicated modules, along with Consul, etcd, NATS, kiln, Google Secret Manager, Azure Key Vault, S3, Parameter Store and AppConfig — [the full catalogue](docs/catalogue.md). Vault, Consul, etcd, Kubernetes, GCP and Azure carry **no dependencies at all**, because on those platforms a credential is a file or a header. For mounted secrets, `env:"KEY,file"` reads the value from the path the variable points at, and `source-k8s` can read a projected volume directly with no API permission. Anything not in the catalogue is still five lines behind `SourceFunc`.
+
+**Can I get `check` / `explain` / `document` as commands in my own CLI?** Yes — `contrib/cli-cobra` mounts them on any cobra root in one line, bound to your config type. They open no database and no network connection, so they still run on a machine where the application itself could not start, which is when you need them. They cannot ship as a prebuilt binary: the three verbs are generic over *your* struct, so the code calling them has to be compiled against it.
 
 **Will it change my process environment?** No, with one opt-in exception: a field tagged `unset` removes its own key after reading, so a child process cannot inherit the secret. That exception is pinned by a test.
 

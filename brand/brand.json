@@ -29,15 +29,16 @@
       "Secrets masked structurally, in Explain and JSON alike, not by output styling",
       "Contract generation: the .env.example is produced from the struct, so it cannot drift",
       "A flag default never wins — only flags the user actually typed count",
-      "One dependency in the core; every adapter is a separate module you opt into"
+      "One dependency in the core; every adapter is a separate module you opt into",
+      "The three verbs ship as a mountable cobra command, so an application CLI gets config check/explain/document without writing a main"
     ]
   },
 
   "topics": [
-    "go", "golang", "configuration", "config", "config-management",
-    "environment-variables", "dotenv", "twelve-factor", "struct-tags",
-    "vault", "consul", "etcd", "kubernetes", "aws", "secrets-management",
-    "provenance", "developer-tools", "library"
+    "config", "config-management", "configuration", "developer-tools", "dotenv",
+    "env", "environment-variables", "go", "golang", "secrets-management",
+    "struct-tags", "twelve-factor", "validation", "koanf-alternative", "viper-alternative",
+    "kubernetes", "provenance", "vault"
   ],
 
   "homepage": "https://pkg.go.dev/github.com/ubgo/cfgkit"

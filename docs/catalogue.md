@@ -19,6 +19,7 @@ import (
 | [`format-toml`](../contrib/format-toml/README.md) | TOML documents and files | `BurntSushi/toml` | **supported** |
 | [`format-yaml`](../contrib/format-yaml/README.md) | YAML documents and files | `gopkg.in/yaml.v3` | **supported** |
 | [`flags-pflag`](../contrib/flags-pflag/README.md) | cobra / pflag flag sets | `spf13/pflag` | **supported** |
+| [`cli-cobra`](../contrib/cli-cobra/README.md) | a cobra `config` command — `check`, `explain`, `document` | `spf13/cobra` | **supported** |
 | [`source-azurekeyvault`](../contrib/source-azurekeyvault/README.md) | Azure Key Vault | **none** | **supported** |
 | [`source-consul`](../contrib/source-consul/README.md) | Consul KV prefixes | **none** | **supported** |
 | [`source-etcd`](../contrib/source-etcd/README.md) | etcd v3 prefixes | **none** | **supported** |
@@ -32,7 +33,7 @@ import (
 | [`source-kiln`](../contrib/source-kiln/README.md) | kiln-encrypted env files — the one source whose file is **safe to commit** | `thunderbottom/kiln` | **supported** |
 | [`source-nats`](../contrib/source-nats/README.md) | NATS JetStream key/value buckets | `nats-io/nats.go` | **supported** |
 
-Every format and flags module is at **100.0%** statement coverage. The source modules run from **96.9% to 100.0%**, and the thirteen uncovered statements across all of them are classified in the [README's testing section](../README.md#testing) rather than rounded away — they are `http.NewRequestWithContext` error returns that cannot fire on an already-parsed URL, `json.Marshal` errors on values that just came out of `json.Unmarshal`, and one lazily-built JetStream context. Each was checked to be unreachable, not assumed.
+Every format and flags module is at **100.0%** statement coverage. The source modules run from **96.9% to 100.0%** and `cli-cobra` sits at **97.1%**, and the sixteen uncovered statements across all of them are enumerated in the [README's testing section](../README.md#testing) rather than rounded away — they are `http.NewRequestWithContext` error returns that cannot fire on an already-parsed URL, `json.Marshal` errors on values that cannot hold a channel or a cycle, one lazily-built JetStream context, and two marshals of cfgkit's own provenance record. Each was checked to be unreachable, not assumed.
 
 All of them pass the shared conformance suite where it applies, run in the same gate as the core, and are **fuzzed**: the format modules against arbitrary document bytes, the HTTP sources against arbitrary response bodies, and the SDK-backed sources against arbitrary payloads through their client seam. `task fuzz:contrib` runs all seventeen targets. The two whose backend cannot be faked at a transport are tested against the real thing instead: `source-nats` starts an in-process NATS server, and `source-kiln` generates an age identity and encrypts a fixture with kiln itself.
 

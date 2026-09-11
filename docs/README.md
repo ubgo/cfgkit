@@ -33,6 +33,7 @@ Adapters that carry a dependency live in their own module, so a consumer compile
 | `contrib/format-toml` | TOML documents and files | [README](../contrib/format-toml/README.md) |
 | `contrib/format-yaml` | YAML documents and files | [README](../contrib/format-yaml/README.md) |
 | `contrib/flags-pflag` | cobra / pflag flag sets | [README](../contrib/flags-pflag/README.md) |
+| `contrib/cli-cobra` | a ready-made cobra `config` command — `check`, `explain`, `document` | [README](../contrib/cli-cobra/README.md) |
 | `contrib/source-azurekeyvault` | Azure Key Vault — **no dependencies** | [README](../contrib/source-azurekeyvault/README.md) |
 | `contrib/source-consul` | Consul KV prefixes — **no dependencies** | [README](../contrib/source-consul/README.md) |
 | `contrib/source-etcd` | etcd v3 prefixes, via its HTTP gateway — **no dependencies** | [README](../contrib/source-etcd/README.md) |
