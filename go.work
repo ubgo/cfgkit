@@ -3,6 +3,7 @@ go 1.26.4
 use (
 	.
 	./examples
+	./contrib/cli-cobra
 	./contrib/flags-pflag
 	./contrib/format-hcl
 	./contrib/format-ini
