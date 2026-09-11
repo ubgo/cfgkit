@@ -6,5 +6,5 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.46.0
 	github.com/aws/aws-sdk-go-v2/config v1.33.3
 	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.30.0
-	github.com/ubgo/cfgkit v0.0.0-20260910135930-6a3f1f034569
+	github.com/ubgo/cfgkit v0.1.0
 )

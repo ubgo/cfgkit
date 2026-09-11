@@ -6,7 +6,9 @@ This module versions **independently of the core**, which is the point of it bei
 
 ## [Unreleased]
 
-Nothing released yet. The module is complete and covered, and waits on the core's first tag — it pins `github.com/ubgo/cfgkit`, and a published module cannot depend on an unpublished one.
+## [0.1.0] - 2026-09-11
+
+First release, pinning `github.com/ubgo/cfgkit` v0.1.0.
 
 ### Added
 

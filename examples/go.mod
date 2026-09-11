@@ -21,7 +21,7 @@ require (
 	github.com/nats-io/nats.go v1.53.1
 	github.com/spf13/pflag v1.0.9
 	github.com/thunderbottom/kiln v1.0.3
-	github.com/ubgo/cfgkit v0.0.0-20260910135930-6a3f1f034569
+	github.com/ubgo/cfgkit v0.1.0
 	github.com/ubgo/cfgkit/contrib/flags-pflag v0.0.0
 	github.com/ubgo/cfgkit/contrib/format-hcl v0.0.0
 	github.com/ubgo/cfgkit/contrib/format-ini v0.0.0
