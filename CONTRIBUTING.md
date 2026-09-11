@@ -60,6 +60,37 @@ Every code sample in the README comes from `example_test.go`, whose `// Output:`
 
 User-facing changes go under `[Unreleased]` in [CHANGELOG.md](CHANGELOG.md), following [Keep a Changelog](https://keepachangelog.com/).
 
+## Releasing
+
+Nothing is tagged yet. Everything below is the procedure for when it is, and the order matters.
+
+**The core is tagged first, and every contrib module then pins that tag.** A contrib module cannot depend on an unpublished core: Go resolves `github.com/ubgo/cfgkit` from the proxy, not from `go.work`, the moment anyone outside this repository runs `go get`. Until the core has a tag, contrib modules pin a **pseudo-version of a pushed commit** — never the bare `v0.0.0` placeholder, which resolves only inside the workspace and fails for everybody else with `unknown revision v0.0.0`.
+
+**Nested modules take path-prefixed tags.** One repository, many modules, so the tag names the module:
+
+```sh
+git tag v0.1.0                                   # the core
+git tag contrib/format-yaml/v0.1.0               # one adapter
+git tag examples/v0.1.0                          # the examples module
+```
+
+A bare `v0.1.0` releases the core **only**. `contrib/format-yaml/v0.1.0` is what makes `go get github.com/ubgo/cfgkit/contrib/format-yaml@v0.1.0` resolve.
+
+**A version the checksum database has seen can never be reused.** Deleting a tag does not unpublish it: `sum.golang.org` keeps the hash forever, and re-tagging the same version against different content makes every future `go get` fail a checksum mismatch. If a release is wrong, **skip forward** — release `v0.1.2`, never re-cut `v0.1.1`. Check what has already been published before choosing a number:
+
+```sh
+curl -s https://proxy.golang.org/github.com/ubgo/cfgkit/@v/list
+```
+
+**Verify from a clean environment before announcing.** The workspace hides exactly the failures a user hits, because `go.work` resolves local paths the proxy has never heard of:
+
+```sh
+cd $(mktemp -d) && go mod init verify
+GOMODCACHE=$(mktemp -d) GOWORK=off GOFLAGS= go get github.com/ubgo/cfgkit/contrib/format-yaml@latest
+```
+
+An empty module cache and `GOWORK=off` are both required. Without them the check passes against state only this machine has.
+
 ## Questions
 
 Open a [discussion or issue](https://github.com/ubgo/cfgkit/issues). We're happy to help you land your first contribution.
