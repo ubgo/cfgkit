@@ -10,5 +10,5 @@ This module versions **independently of the core**.
 
 - `File(path, opts...)` and `Document(name, doc, opts...)`: JSONC as a structured source, parsed by `github.com/ubgo/textdata/jsonc`, matched by `json:` tags. textdata/jsonc options pass through (`WithExpand`, `WithLookup`, `WithPlugin`, `Strict`).
 - Per-value provenance: `Origins`, `LocateField`, `Locate` and `Locations` report the `file:line` each value was written at.
-- Syntax errors and wrong-type values report `file:line:col`.
+- Syntax errors, wrong-type values and expansion errors report `file:line:col`.
 - Passes the shared `cfgkittest` conformance suite; a missing file is silent, a broken one is an error.

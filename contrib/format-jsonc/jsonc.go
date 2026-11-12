@@ -98,7 +98,7 @@ func (s *Source) Apply(dst any) error {
 	}
 
 	plain := doc
-	if s.expands() {
+	if doc.ExpandRequested() {
 		if plain, err = doc.Expanded(); err != nil {
 			return s.fileErr(err)
 		}
@@ -126,24 +126,6 @@ func (s *Source) parse() (*jsonc.Doc, error) {
 		return nil, nil
 	}
 	return d, nil
-}
-
-// expands reports whether the caller passed jsonc.WithExpand.
-//
-// jsonc options are opaque functions and textdata/jsonc exposes the setting
-// only through jsonc.Read, which decodes into a map (losing integers above
-// 2^53). So the option is recognised by identity: every jsonc.WithExpand()
-// returns the same function body, and reflect reports its code pointer. A
-// test pins this, so a change on the textdata side fails loudly here instead
-// of silently turning expansion off.
-func (s *Source) expands() bool {
-	want := reflect.ValueOf(jsonc.WithExpand()).Pointer()
-	for _, o := range s.opts {
-		if o != nil && reflect.ValueOf(o).Pointer() == want {
-			return true
-		}
-	}
-	return false
 }
 
 // fileName is the file errors and locations report.
