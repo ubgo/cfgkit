@@ -80,7 +80,7 @@ Locations describe the file as written, before expansion, and the document the m
 | The file exists but cannot be read | error |
 | Syntax error | `config.jsonc:3:3: missing comma ...` |
 | A value of the wrong type | `config.jsonc:7:13: json: cannot unmarshal string into ... of type int`, at the value |
-| `${VAR:?message}` unset, with expansion on | error naming the file and the path |
+| `${VAR:?message}` unset, with expansion on | `config.jsonc:2:11: ... required variable ...`, at the string |
 
 Errors are `*pos.Error` / `pos.ErrorList` from `github.com/ubgo/textdata/pos`, wrapped by cfgkit's `*SourceError`; `pos.First(err)` returns the first position.
 
@@ -90,7 +90,7 @@ Errors are `*pos.Error` / `pos.ErrorList` from `github.com/ubgo/textdata/pos`, w
 
 **JSON5 is not JSONC.** Unquoted keys, single quotes, hex numbers and `NaN` are errors.
 
-**Pass `jsonc.WithExpand()` directly.** It is recognised in the option list by identity; an option of your own that calls it internally is not seen, and expansion stays off.
+**Integers stay exact.** The document is decoded straight into the struct, never through a map of `float64`, so an `int64` above 2^53 survives, with or without expansion.
 
 **An identical value is invisible to cfgkit's provenance.** A source that writes the value already present leaves the earlier origin standing in `Explain`, and so in `Origins`. `LocateField` still answers where this file wrote it.
 

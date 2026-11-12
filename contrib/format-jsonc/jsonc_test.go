@@ -277,8 +277,7 @@ func TestExpansion(t *testing.T) {
 			if got.Name != c.wantName || got.Server.Host != c.wantHost {
 				t.Errorf("got name=%q host=%q, want %q %q", got.Name, got.Server.Host, c.wantName, c.wantHost)
 			}
-			// Positions always describe the file as written. The "on" cases also
-			// pin that jsonc.WithExpand is recognised (see Source.expands).
+			// Positions always describe the file as written.
 			if l, ok := src.LocateField(got, "Server.Host"); !ok || l.Pos.Line != 3 || l.Pos.Col != 22 {
 				t.Errorf("Server.Host at %+v (%v), want 3:22", l, ok)
 			}
@@ -287,10 +286,33 @@ func TestExpansion(t *testing.T) {
 }
 
 func TestExpansionErrorFailsTheLoad(t *testing.T) {
-	src := jsoncsrc.Document("req.jsonc", []byte(`{"name": "${MUST:?is required}"}`), jsonc.WithExpand())
+	src := jsoncsrc.Document("req.jsonc", []byte("{\n  \"name\": \"${MUST:?is required}\"\n}"), jsonc.WithExpand())
 	_, _, err := cfgkit.Load[cfg](cfgkit.WithSources(src))
-	if err == nil || !strings.Contains(err.Error(), "is required") || !strings.Contains(err.Error(), "req.jsonc") {
-		t.Errorf("error = %v, want the required-variable message naming req.jsonc", err)
+	if err == nil || !strings.Contains(err.Error(), "is required") || !strings.Contains(err.Error(), "req.jsonc:2:11") {
+		t.Errorf("error = %v, want the required-variable message at req.jsonc:2:11", err)
+	}
+	if pe := pos.First(err); pe == nil || pe.Pos.Line != 2 || pe.Pos.Col != 11 {
+		t.Errorf("pos.First = %+v, want line 2 col 11", pe)
+	}
+}
+
+// TestBigIntegersStayExact: the document is decoded into the struct, never
+// through a map of float64, so integers above 2^53 survive, with and without
+// expansion.
+func TestBigIntegersStayExact(t *testing.T) {
+	type big struct {
+		ID   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+	const doc = `{"id": 9007199254740993, "name": "${N:-x}"}`
+	for _, opts := range [][]jsonc.Option{nil, {jsonc.WithExpand()}} {
+		got, _, err := cfgkit.Load[big](cfgkit.WithSources(jsoncsrc.Document("big.jsonc", []byte(doc), opts...)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got.ID != 9007199254740993 {
+			t.Errorf("expand=%v: ID = %d, want 9007199254740993", len(opts) > 0, got.ID)
+		}
 	}
 }
 
