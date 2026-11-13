@@ -8,7 +8,7 @@ This module versions **independently of the core**.
 
 ## [0.1.1] - 2026-11-13
 
-First release, pinning `github.com/ubgo/cfgkit` v0.1.1 and `github.com/ubgo/textdata/jsonc` v0.1.1.
+First release, pinning `github.com/ubgo/cfgkit` v0.1.1 and `github.com/ubgo/textdata/jsonc` v0.1.2.
 
 ### Added
 
