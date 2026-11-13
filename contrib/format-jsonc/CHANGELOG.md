@@ -6,6 +6,12 @@ This module versions **independently of the core**.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-13
+
+### Changed
+
+- Requires `github.com/ubgo/textdata/jsonc` v0.1.4, the first public textdata release (its v0.1.1-v0.1.3 tags are retracted), and `github.com/ubgo/cfgkit` v0.1.3. Behaviour is unchanged; a missing file is still silent.
+
 ## [0.1.3] - 2026-11-13
 
 ### Changed
