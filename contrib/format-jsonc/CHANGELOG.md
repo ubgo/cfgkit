@@ -6,6 +6,12 @@ This module versions **independently of the core**.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-11-13
+
+### Changed
+
+- Requires `github.com/ubgo/textdata/jsonc` v0.1.5 (inserted line endings in mixed LF/CRLF files no longer come from inside a block comment). Reading is unchanged.
+
 ## [0.1.4] - 2026-11-13
 
 ### Changed
