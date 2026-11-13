@@ -6,6 +6,12 @@ This module versions **independently of the core**.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-13
+
+### Fixed
+
+- Tests now cover how `LocateField` applies the `json:` tag rules (`-`, untagged names, embedded non-structs, named and pointer embedded structs), `Locate` on missing paths and on JSON Pointer digit keys under an object, a broken document, and array-element field paths. Statement coverage went from 92.4% to 98.1%. No behaviour change.
+
 ## [0.1.1] - 2026-11-13
 
 First release, pinning `github.com/ubgo/cfgkit` v0.1.1 and `github.com/ubgo/textdata/jsonc` v0.1.2.
