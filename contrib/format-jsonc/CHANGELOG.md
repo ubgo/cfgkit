@@ -6,6 +6,10 @@ This module versions **independently of the core**.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-13
+
+First release, pinning `github.com/ubgo/cfgkit` v0.1.1 and `github.com/ubgo/textdata/jsonc` v0.1.1.
+
 ### Added
 
 - `File(path, opts...)` and `Document(name, doc, opts...)`: JSONC as a structured source, parsed by `github.com/ubgo/textdata/jsonc`, matched by `json:` tags. textdata/jsonc options pass through (`WithExpand`, `WithLookup`, `WithPlugin`, `Strict`).
