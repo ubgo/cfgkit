@@ -1,4 +1,4 @@
-github.com/ubgo/textdata v0.1.1 h1:BMEYHcCJhL3EZpbGc+uCApJZCaPpkUljWU5sUB6piI8=
-github.com/ubgo/textdata v0.1.1/go.mod h1:1va34iWWHcWGbX2TFLdKTvY0I4NTG9wNN2DMyOYUvM4=
-github.com/ubgo/textdata/dotenv v0.1.1 h1:F3r+8yNcQ/q0JN6712PvxcbBaE+M/pZRx9Abis+KC2E=
-github.com/ubgo/textdata/dotenv v0.1.1/go.mod h1:w575gpbGNazaHCC6e4IkSe8PV1nJyGoHnqr+rEzv60Q=
+github.com/ubgo/textdata v0.1.2 h1:/v5q8kWEDSr128k9DREuosjZw7F4zUocEvFGw51I3o4=
+github.com/ubgo/textdata v0.1.2/go.mod h1:1va34iWWHcWGbX2TFLdKTvY0I4NTG9wNN2DMyOYUvM4=
+github.com/ubgo/textdata/dotenv v0.1.2 h1:6A1l+vwZJOfg8iY5LvnKelWdcXz20CBmnfoBc/jHF+I=
+github.com/ubgo/textdata/dotenv v0.1.2/go.mod h1:ElSS5beWvqg3l8uoSvnB1grXirYU87qIW87dWYdpqwk=
