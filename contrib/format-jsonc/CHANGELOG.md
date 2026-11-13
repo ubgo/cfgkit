@@ -6,6 +6,12 @@ This module versions **independently of the core**.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-13
+
+### Changed
+
+- Requires `github.com/ubgo/textdata/jsonc` v0.1.3 and `github.com/ubgo/cfgkit` v0.1.2. jsonc v0.1.3 makes `jsonc.Read` fail on a missing file; this source reads through `jsonc.Open` and `Existed`, so a missing file is still silent, as `TestMissingFileIsNotAnError` pins.
+
 ## [0.1.2] - 2026-11-13
 
 ### Fixed

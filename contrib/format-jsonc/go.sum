@@ -1,8 +1,8 @@
-github.com/ubgo/cfgkit v0.1.1 h1:lWPgxNwSKXUbqBsfQ3Pvc5SMHXMey7h33ZaM35wvFRg=
-github.com/ubgo/cfgkit v0.1.1/go.mod h1:5grDtcAj+U4Jd5mouCDeW034h1ZFuWt7hQ3X/Bt+6N4=
-github.com/ubgo/textdata v0.1.1 h1:BMEYHcCJhL3EZpbGc+uCApJZCaPpkUljWU5sUB6piI8=
-github.com/ubgo/textdata v0.1.1/go.mod h1:1va34iWWHcWGbX2TFLdKTvY0I4NTG9wNN2DMyOYUvM4=
-github.com/ubgo/textdata/dotenv v0.1.1 h1:F3r+8yNcQ/q0JN6712PvxcbBaE+M/pZRx9Abis+KC2E=
-github.com/ubgo/textdata/dotenv v0.1.1/go.mod h1:w575gpbGNazaHCC6e4IkSe8PV1nJyGoHnqr+rEzv60Q=
-github.com/ubgo/textdata/jsonc v0.1.2 h1:0S/eT/nOLKfmCr5Z3CDwiJYvLhTevXm8JxRx08jWzmk=
-github.com/ubgo/textdata/jsonc v0.1.2/go.mod h1:bh2U66QXZZmEyiYwz++t5BMo36XMk7eNXQv/7LRCazw=
+github.com/ubgo/cfgkit v0.1.2 h1:r3fbJSomO5uCP4UuC2M+jX0rewEzRgltQUHNr3f/i/w=
+github.com/ubgo/cfgkit v0.1.2/go.mod h1:XA88vAQ/BsbxLkrnpxdMkRLCLjZmZP6CsG84UqZvoTM=
+github.com/ubgo/textdata v0.1.2 h1:/v5q8kWEDSr128k9DREuosjZw7F4zUocEvFGw51I3o4=
+github.com/ubgo/textdata v0.1.2/go.mod h1:1va34iWWHcWGbX2TFLdKTvY0I4NTG9wNN2DMyOYUvM4=
+github.com/ubgo/textdata/dotenv v0.1.2 h1:6A1l+vwZJOfg8iY5LvnKelWdcXz20CBmnfoBc/jHF+I=
+github.com/ubgo/textdata/dotenv v0.1.2/go.mod h1:ElSS5beWvqg3l8uoSvnB1grXirYU87qIW87dWYdpqwk=
+github.com/ubgo/textdata/jsonc v0.1.3 h1:Vfu2aoaAF6DdGMWTTF9Pk6EdlzuU/A5V2GEjH7yD7jI=
+github.com/ubgo/textdata/jsonc v0.1.3/go.mod h1:s+1n1Z8aFvYnuH7zGUvvk+zvWYqqJrtVaDhPHZp5NGI=
