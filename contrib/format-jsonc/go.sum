@@ -1,0 +1,8 @@
+github.com/ubgo/cfgkit v0.1.0 h1:NwthQ+CxuzVD2uDOP1oqlUtA+tT1dkfDc50RStdpYFo=
+github.com/ubgo/cfgkit v0.1.0/go.mod h1:KLN0WvxPRr2R3KkqbUCg9DIu1rSGGe1DGy3inl2kIFI=
+github.com/ubgo/dotenv v0.1.2-0.20260910135617-45e991e589f1 h1:B5ncVFVS8wB/E75WVoLaA769GTBB9cDthn3Wxbs4D58=
+github.com/ubgo/dotenv v0.1.2-0.20260910135617-45e991e589f1/go.mod h1:krAvKUOO5R06oeJPUtmcj5slvgAH+yZ/de21eUNz7Is=
+github.com/ubgo/textdata v0.1.1 h1:BMEYHcCJhL3EZpbGc+uCApJZCaPpkUljWU5sUB6piI8=
+github.com/ubgo/textdata v0.1.1/go.mod h1:1va34iWWHcWGbX2TFLdKTvY0I4NTG9wNN2DMyOYUvM4=
+github.com/ubgo/textdata/jsonc v0.1.1 h1:hHDbGKO2/llncKrZGferkqH6Ln+oPUJyIeta1N6h0DE=
+github.com/ubgo/textdata/jsonc v0.1.1/go.mod h1:bh2U66QXZZmEyiYwz++t5BMo36XMk7eNXQv/7LRCazw=
