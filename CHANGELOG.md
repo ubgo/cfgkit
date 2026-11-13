@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 ### Security
 
+## [0.1.3] - 2026-11-13
+
+### Changed
+
+- Requires `github.com/ubgo/textdata/dotenv` v0.1.4 (and its base v0.1.4), the first public textdata release; its v0.1.1-v0.1.3 tags are retracted. `FromFiles` behaves the same.
+
 ## [0.1.2] - 2026-11-13
 
 ### Changed
