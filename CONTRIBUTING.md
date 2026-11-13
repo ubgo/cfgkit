@@ -29,7 +29,7 @@ Every one of these is pinned by a test. A change that trips one is wrong, not th
 
 ## The dependency rule
 
-**The core module has one dependency: `github.com/ubgo/dotenv`.** Anything that carries another goes in its own module under `contrib/`, so a consumer compiles only what it imports. `task deps` checks this.
+**The core module has one dependency: `github.com/ubgo/textdata/dotenv` (with its stdlib-only base `github.com/ubgo/textdata`).** Anything that carries another goes in its own module under `contrib/`, so a consumer compiles only what it imports. `task deps` checks this.
 
 If your change adds an import to the root module, it is almost certainly a `contrib/` module instead.
 

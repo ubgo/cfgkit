@@ -144,7 +144,7 @@ Reads `os.Environ()`.
 
 ### `FromFiles(paths...) Source`
 
-Reads `.env` files through `ubgo/dotenv`. A later path wins; **a missing file is not an error**.
+Reads `.env` files through `ubgo/textdata/dotenv`. A later path wins; **a missing file is not an error**.
 
 **Use it when:** local development, so nobody has to export a dozen variables by hand before running the app.
 

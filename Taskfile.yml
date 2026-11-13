@@ -152,7 +152,7 @@ tasks:
         if [ -n "$out" ]; then echo "gofmt needed on:"; echo "$out"; exit 1; fi
 
   deps:
-    desc: Show third-party dependencies — must be ubgo/dotenv and nothing else
+    desc: Show third-party dependencies — must be ubgo/textdata/dotenv and its base ubgo/textdata, nothing else
     cmds:
       - 'go list -deps ./... | grep "\." | grep -v ubgo/cfgkit | sort -u || echo "none"'
 
@@ -173,14 +173,14 @@ tasks:
         cmd: cd contrib/{{.ITEM}} && GOWORK=off go get github.com/ubgo/cfgkit@latest && GOWORK=off go mod tidy
 
   bump:
-    desc: Re-pin ubgo/dotenv to the pushed main HEAD, then rebuild in module mode
+    desc: Re-pin ubgo/textdata/dotenv to its newest tag, then rebuild in module mode
     cmds:
-      # GOWORK=off so the pin resolves against the REMOTE main rather than a
+      # GOWORK=off so the pin resolves against the published tag rather than a
       # sibling directory — this pin is what `go install`/`go get` users build
       # against, and a workspace would mask a stale one.
-      - GOWORK=off go get github.com/ubgo/dotenv@main
+      - GOWORK=off go get github.com/ubgo/textdata/dotenv@latest
       - GOWORK=off go build ./...
-      - 'grep "github.com/ubgo/dotenv v" go.mod'
+      - 'grep "github.com/ubgo/textdata/dotenv v" go.mod'
 
   build:cross:
     desc: Build for every supported platform — the claim "runs anywhere", checked

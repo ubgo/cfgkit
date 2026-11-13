@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://pkg.go.dev/github.com/ubgo/cfgkit"><img src="https://pkg.go.dev/badge/github.com/ubgo/cfgkit.svg" alt="Go Reference on pkg.go.dev"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-2ea44f" alt="License: Apache-2.0"></a>
-  <img src="https://img.shields.io/badge/dependencies-1-2ea44f" alt="One dependency: ubgo/dotenv">
+  <img src="https://img.shields.io/badge/dependencies-1-2ea44f" alt="One dependency: ubgo/textdata/dotenv">
   <img src="https://img.shields.io/badge/coverage-100%25%20core%20·%20≥96.9%25%20contrib-2ea44f" alt="100% statement coverage on the core, at least 96.9% on every contrib module">
   <img src="https://img.shields.io/badge/platforms-linux%20%7C%20macos%20%7C%20windows-2ea44f" alt="Built and tested on linux, macOS and Windows">
 </p>
@@ -17,7 +17,7 @@ go get github.com/ubgo/cfgkit                              # the library
 go get github.com/ubgo/cfgkit/contrib/source-vault         # any adapter you want, separately
 ```
 
-One dependency: [`github.com/ubgo/dotenv`](https://github.com/ubgo/dotenv), which is itself stdlib-only. **Minimum Go: 1.22** — checked by a CI job that builds and tests the core with a real 1.22 toolchain, not asserted here. Adapter modules under `contrib/` are floored by the SDKs they wrap and may need more.
+One dependency: [`github.com/ubgo/textdata/dotenv`](https://github.com/ubgo/textdata/tree/main/dotenv), which is itself stdlib-only (with its stdlib-only base, `github.com/ubgo/textdata`). **Minimum Go: 1.22** — checked by a CI job that builds and tests the core with a real 1.22 toolchain, not asserted here. Adapter modules under `contrib/` are floored by the SDKs they wrap and may need more.
 
 **Three things ship here, and each installs on its own:**
 
@@ -120,7 +120,7 @@ PORT=8080
 TIMEOUT=15s
 ```
 
-Output is byte-stable, so CI can regenerate and diff. Pair it with [`dotenvctl matrix --contract .env.example`](https://github.com/ubgo/dotenv) and the loop closes: **struct → contract → every environment checked → red build.**
+Output is byte-stable, so CI can regenerate and diff. Pair it with [`textdatactl dotenv matrix --contract .env.example`](https://github.com/ubgo/textdata/tree/main/dotenv/cli) and the loop closes: **struct → contract → every environment checked → red build.**
 
 ## Sources
 
@@ -288,6 +288,7 @@ Adapters carrying a dependency live in their own module, so you compile only wha
 |---|---|---|
 | `contrib/format-hcl` | HCL documents and files | [README](contrib/format-hcl/README.md) |
 | `contrib/format-ini` | INI documents and files — **flat** | [README](contrib/format-ini/README.md) |
+| `contrib/format-jsonc` | JSONC (JSON with comments) files with `file:line` provenance | [README](contrib/format-jsonc/README.md) |
 | `contrib/format-properties` | Java `.properties` — **flat** | [README](contrib/format-properties/README.md) |
 | `contrib/format-toml` | TOML documents and files | [README](contrib/format-toml/README.md) |
 | `contrib/format-yaml` | YAML documents and files | [README](contrib/format-yaml/README.md) |
