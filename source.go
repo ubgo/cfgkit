@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ubgo/dotenv"
+	"github.com/ubgo/textdata/dotenv"
 )
 
 // Config data comes in exactly two shapes, and cfgkit models both rather than
@@ -194,7 +194,7 @@ func FromJSON(b []byte) StructuredSource {
 	})
 }
 
-// FromFiles returns a Source backed by .env files, parsed by ubgo/dotenv.
+// FromFiles returns a Source backed by .env files, parsed by ubgo/textdata/dotenv.
 //
 // Files are consulted in REVERSE order, so a later path in the argument list
 // wins — matching the .env / .env.local / .env.<mode> convention users already

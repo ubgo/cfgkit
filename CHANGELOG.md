@@ -13,6 +13,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 ### Security
 
+## [0.1.1] - 2026-11-13
+
+### Changed
+
+- `.env` files are parsed by `github.com/ubgo/textdata/dotenv` v0.1.1, the new home of `github.com/ubgo/dotenv` (now archived). Behaviour is unchanged; the core still has one dependency, plus that module's stdlib-only base `github.com/ubgo/textdata`.
+
+### Added
+
+- `contrib/format-jsonc` (its own module, first release v0.1.1) is listed in the contrib catalogue.
+
 ## [0.1.0] - 2026-09-11
 
 First release.
@@ -35,3 +45,4 @@ Release process:
 -->
 
 [Unreleased]: https://github.com/ubgo/cfgkit/commits/main
+[0.1.1]: https://github.com/ubgo/cfgkit/releases/tag/v0.1.1

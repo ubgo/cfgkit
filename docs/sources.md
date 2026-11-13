@@ -68,7 +68,7 @@ The same holds across the chain — a later source clearing an earlier source's 
 | `FromMap(m)` | flat | an in-memory map | **testing** — no files, no environment, no ordering surprises |
 | `FromEnviron()` | flat | `os.Environ()` | always in production; it is how containers and CI pass configuration |
 | `FromPrefixedEnviron(p)` | flat | `os.Environ()`, prefix stripped | one process hosts several components whose short key names would collide |
-| `FromFiles(paths...)` | flat | `.env` files via `ubgo/dotenv` | local development, so nobody has to export a dozen variables by hand |
+| `FromFiles(paths...)` | flat | `.env` files via `ubgo/textdata/dotenv` | local development, so nobody has to export a dozen variables by hand |
 | `FromFlagSet(fs)` | flat | a parsed stdlib flag set | an operator wants to override one value for one run |
 | `FromJSON(b)` | structured | a JSON object | configuration comes from Pkl, a remote API, or an embedded document |
 

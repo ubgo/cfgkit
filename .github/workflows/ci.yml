@@ -76,7 +76,7 @@ jobs:
   # raced here rather than assumed.
   # The minimum Go version is a CLAIM, and prose does not verify it. This job
   # is what makes "works on Go 1.22" true: it builds and tests the CORE module
-  # with a real 1.22 toolchain, resolving github.com/ubgo/dotenv from the proxy
+  # with a real 1.22 toolchain, resolving github.com/ubgo/textdata/dotenv from the proxy
   # exactly as a consumer would.
   #
   # It builds the ROOT module only, deliberately. Every contrib module pulls a

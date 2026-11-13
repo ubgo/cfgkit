@@ -6,7 +6,7 @@
 go get github.com/ubgo/cfgkit
 ```
 
-One dependency comes with it: `github.com/ubgo/dotenv`, which is itself stdlib-only.
+One dependency comes with it: `github.com/ubgo/textdata/dotenv`, which is itself stdlib-only (it brings its stdlib-only base, `github.com/ubgo/textdata`).
 
 ## The smallest thing that works
 
