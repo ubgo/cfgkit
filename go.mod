@@ -5,3 +5,5 @@ go 1.22
 require github.com/ubgo/textdata/dotenv v0.1.4
 
 require github.com/ubgo/textdata v0.1.4 // indirect
+
+retract v0.1.4 // contained a generated file that should not have been published
