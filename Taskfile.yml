@@ -197,6 +197,7 @@ tasks:
   ci:
     desc: The full gate — format, vet, race tests, cross-build, across every module
     cmds:
+      - task: names:check
       - task: fmt:check
       - task: vet
       - task: build:cross
@@ -209,3 +210,8 @@ tasks:
     desc: Remove coverage artifacts
     cmds:
       - rm -f cover.out cover.html
+
+  names:check:
+    desc: Fail if a tracked file holds a private name listed (as a sha256 hash) in .github/denyhash.txt
+    cmds:
+      - bash scripts/check-names.sh
